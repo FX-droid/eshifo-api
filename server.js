@@ -3,12 +3,15 @@ const cors = require("cors");
 
 const app = express();
 
+// Middleware
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+app.use(express.json()); // 🔑 req.body ishlashi uchun
 
+// In-memory data
 const users = [];
 const doctors = [];
 const requests = [];
@@ -25,27 +28,14 @@ app.post("/users/register", (req, res) => {
 app.get("/users", (req, res) => res.json(users));
 
 // === DOCTORS ===
-app.post("/doctors/register", async (req, res) => {
-    try {
-        const doctor = new Doctor(req.body);
-        await doctor.save(); // 🔑 saqlash
-        res.json({ message: "Doctor qo‘shildi", doctor });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+app.post("/doctors/register", (req, res) => {
+    const { username, email, name, specialization } = req.body;
+    const doctor = { username, email, name, specialization, created_at: new Date() };
+    doctors.push(doctor);
+    res.json({ success: true, doctor });
 });
 
-app.get("/doctors", async (req, res) => {
-    try {
-        const doctors = await Doctor.find(); // 🔑 DB’dan o‘qish
-        res.json(doctors);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
+app.get("/doctors", (req, res) => res.json(doctors));
 
 // === REQUESTS ===
 app.post("/requests/create", (req, res) => {
@@ -73,9 +63,10 @@ app.post("/answers/create", (req, res) => {
 app.get("/answers", (req, res) => res.json(answers));
 
 // === RUN ===
-app.listen(3000, () => console.log("API running on port 3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`API running on port ${PORT}`));
 
-/* === Example data qo‘shib qo‘yish === */
+// === Example data qo‘shib qo‘yish ===
 users.push({ username: "@faxriyorbotirxonovgo", full_name: "Faxriyor", phone: "998901112233", created_at: new Date() });
 doctors.push({ username: "@faxriyorbotirxonovgo", email: "doctor@example.com", name: "Faxriyor", specialization: "Terapevt", created_at: new Date() });
 const reqId = Date.now().toString();
