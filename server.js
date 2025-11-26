@@ -27,15 +27,25 @@ app.get("/users", (req, res) => res.json(users));
 // === DOCTORS ===
 app.post("/doctors/register", async (req, res) => {
     try {
-
-        res.json({ message: "Doctor registered" });
+        const doctor = new Doctor(req.body);
+        await doctor.save(); // 🔑 saqlash
+        res.json({ message: "Doctor qo‘shildi", doctor });
     } catch (err) {
-        console.error("Error in /doctors/register:", err);
+        console.error(err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-app.get("/doctors", (req, res) => res.json(doctors));
+app.get("/doctors", async (req, res) => {
+    try {
+        const doctors = await Doctor.find(); // 🔑 DB’dan o‘qish
+        res.json(doctors);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 
 // === REQUESTS ===
 app.post("/requests/create", (req, res) => {
