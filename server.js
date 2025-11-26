@@ -1,12 +1,14 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+
 const app = express();
 
-app.use(cors()); // 🔑 CORS ni yoqamiz
-app.use(bodyParser.json());
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-// Fake DB (RAM ichida saqlanadi)
 const users = [];
 const doctors = [];
 const requests = [];
