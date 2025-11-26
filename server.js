@@ -25,11 +25,14 @@ app.post("/users/register", (req, res) => {
 app.get("/users", (req, res) => res.json(users));
 
 // === DOCTORS ===
-app.post("/doctors/register", (req, res) => {
-    const { username, email, name, specialization } = req.body;
-    const doctor = { username, email, name, specialization, created_at: new Date() };
-    doctors.push(doctor);
-    res.json({ success: true, doctor });
+app.post("/doctors/register", async (req, res) => {
+    try {
+
+        res.json({ message: "Doctor registered" });
+    } catch (err) {
+        console.error("Error in /doctors/register:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 app.get("/doctors", (req, res) => res.json(doctors));
