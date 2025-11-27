@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
+// Middleware
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -71,3 +72,46 @@ app.get("/answers", (req, res) => res.json(answers));
 // === RUN ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+
+// === Example data qo‘shib qo‘yish ===
+users.push({
+    username: "@faxriyorbotirxonovgo",
+    full_name: "Faxriyor Botirxonov",
+    phone: "998901112233",
+    created_at: new Date()
+});
+
+doctors.push({
+    username: "@doctor_ali",
+    email: "doctorali@example.com",
+    name: "Ali Karimov",
+    specialization: "Terapevt",
+    created_at: new Date()
+});
+
+
+const reqId1 = Date.now().toString();
+requests.push({
+    id: reqId1,
+    username: "patient_1",
+    disease: "Gripp",
+    complaint: "2 kundan beri isitma va yo‘tal",
+    status: "answered"
+});
+
+answers.push({
+    id: Date.now().toString(),
+    request_id: reqId1,
+    doctor_username: "@doctor_ali",
+    text: "Paracetamol iching va ko‘proq suyuqlik iching",
+    created_at: new Date()
+});
+
+const reqId2 = (Date.now() + 1).toString();
+requests.push({
+    id: reqId2,
+    username: "patient_2",
+    disease: "Bosh og‘rig‘i",
+    complaint: "Ko‘p ishlaganimdan keyin boshim qattiq og‘riyapti",
+    status: "pending"
+});
