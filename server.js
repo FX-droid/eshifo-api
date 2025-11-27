@@ -28,6 +28,16 @@ app.post("/admins/register", async (req, res) => {
     res.json({ success: true, admin });
 });
 
+// === ADMINS LIST ===
+app.get("/admins", (req, res) => {
+    const adminsList = admins.map(a => ({
+        username: a.username,
+        created_at: a.created_at
+    }));
+    res.json(adminsList);
+});
+
+
 // === ADMIN LOGIN ===
 app.post("/admins/login", async (req, res) => {
     const { username, code } = req.body;
