@@ -3,13 +3,12 @@ const cors = require("cors");
 
 const app = express();
 
-// Middleware
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.use(express.json()); // 🔑 req.body ishlashi uchun
+app.use(express.json());
 
 // In-memory data
 const users = [];
@@ -35,7 +34,14 @@ app.post("/doctors/register", (req, res) => {
     res.json({ success: true, doctor });
 });
 
-app.get("/doctors", (req, res) => res.json(doctors));
+// GET doctors + stats (nechta javob berganini ko‘rsatadi)
+app.get("/doctors", (req, res) => {
+    const doctorsWithStats = doctors.map(doc => {
+        const answersCount = answers.filter(a => a.doctor_username === doc.username).length;
+        return { ...doc, answersCount };
+    });
+    res.json(doctorsWithStats);
+});
 
 // === REQUESTS ===
 app.post("/requests/create", (req, res) => {
@@ -65,10 +71,3 @@ app.get("/answers", (req, res) => res.json(answers));
 // === RUN ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on port ${PORT}`));
-
-// === Example data qo‘shib qo‘yish ===
-users.push({ username: "@faxriyorbotirxonovgo", full_name: "Faxriyor", phone: "998901112233", created_at: new Date() });
-doctors.push({ username: "@faxriyorbotirxonovgo", email: "doctor@example.com", name: "Faxriyor", specialization: "Terapevt", created_at: new Date() });
-const reqId = Date.now().toString();
-requests.push({ id: reqId, username: "faxriyor", disease: "Gripp", complaint: "2 kundan beri isitma va yo‘tal", status: "answered" });
-answers.push({ id: Date.now().toString(), request_id: reqId, doctor_username: "@faxriyorbotirxonovgo", text: "Paracetamol iching va ko‘proq suyuqlik iching", created_at: new Date() });
