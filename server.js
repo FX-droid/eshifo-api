@@ -1,9 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
-// Middleware
 app.use(cors({
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -16,6 +17,39 @@ const users = [];
 const doctors = [];
 const requests = [];
 const answers = [];
+const admins = []; // 🔑 adminlar
+
+// === ADMIN REGISTER ===
+app.post("/admins/register", async (req, res) => {
+    const { username, code } = req.body;
+    const hashedCode = await bcrypt.hash(code, 10);
+    const admin = { username, code: hashedCode, created_at: new Date() };
+    admins.push(admin);
+    res.json({ success: true, admin });
+});
+
+// === ADMIN LOGIN ===
+app.post("/admins/login", async (req, res) => {
+    const { username, code } = req.body;
+    const admin = admins.find(a => a.username === username);
+    if (!admin) return res.status(401).json({ error: "Admin not found" });
+
+    const match = await bcrypt.compare(code, admin.code);
+    if (!match) return res.status(401).json({ error: "Invalid code" });
+
+    const token = jwt.sign({ username: admin.username, role: "admin" }, "SECRET_KEY", { expiresIn: "1h" });
+    res.json({ success: true, token });
+});
+
+// === Example admin qo‘shib qo‘yish ===
+(async () => {
+    const hashedCode = await bcrypt.hash("admin123", 10);
+    admins.push({
+        username: "superadmin",
+        code: hashedCode,
+        created_at: new Date()
+    });
+})();
 
 // === USERS ===
 app.post("/users/register", (req, res) => {
@@ -35,7 +69,6 @@ app.post("/doctors/register", (req, res) => {
     res.json({ success: true, doctor });
 });
 
-// GET doctors + stats (nechta javob berganini ko‘rsatadi)
 app.get("/doctors", (req, res) => {
     const doctorsWithStats = doctors.map(doc => {
         const answersCount = answers.filter(a => a.doctor_username === doc.username).length;
@@ -60,7 +93,6 @@ app.post("/answers/create", (req, res) => {
     const answer = { id: Date.now().toString(), request_id, doctor_username, text, created_at: new Date() };
     answers.push(answer);
 
-    // update request status
     const reqIndex = requests.findIndex(r => r.id === request_id);
     if (reqIndex !== -1) requests[reqIndex].status = "answered";
 
@@ -72,6 +104,7 @@ app.get("/answers", (req, res) => res.json(answers));
 // === RUN ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on port ${PORT}`));
+
 
 // === Example data qo‘shib qo‘yish ===
 users.push({
