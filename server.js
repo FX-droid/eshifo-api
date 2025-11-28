@@ -106,19 +106,24 @@ app.get("/doctors", (req, res) => {
 // === REQUESTS ===
 app.post("/requests/create", (req, res) => {
     const { username, disease, complaint, specialization, assigned_doctor } = req.body;
+
+
     const request = {
         id: Date.now().toString(),
         username,
         disease,
         complaint,
         specialization,
-        assigned_doctor,   // 🔑 bu maydonni qo‘shamiz
+        assigned_doctor,
         status: "pending",
         created_at: new Date()
     };
+
     requests.push(request);
+
     res.json({ success: true, request });
 });
+
 
 
 app.get("/requests", (req, res) => res.json(requests));
