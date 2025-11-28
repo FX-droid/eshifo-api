@@ -105,7 +105,7 @@ app.get("/doctors", (req, res) => {
 
 // === REQUESTS ===
 app.post("/requests/create", (req, res) => {
-    const { username, disease, complaint, specialization, assigned_doctor } = req.body;
+    const { username, disease, complaint, specialization, assigned_doctor, telegram_id } = req.body;
 
     const request = {
         id: Date.now().toString(),
@@ -114,12 +114,12 @@ app.post("/requests/create", (req, res) => {
         complaint,
         specialization,
         assigned_doctor,
+        telegram_id,
         status: "pending",
         created_at: new Date()
     };
 
     requests.push(request);
-
     res.json({ success: true, request });
 });
 
