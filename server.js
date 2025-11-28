@@ -134,9 +134,16 @@ app.get("/doctor/requests/:username", (req, res) => {
 // === ANSWERS ===
 app.post("/answers/create", (req, res) => {
     const { request_id, doctor_username, text } = req.body;
-    const answer = { id: Date.now().toString(), request_id, doctor_username, text, created_at: new Date() };
+    const answer = {
+        id: Date.now().toString(),
+        request_id,
+        doctor_username,
+        text,
+        created_at: new Date()
+    };
     answers.push(answer);
 
+    // murojaatni update qilamiz
     const reqIndex = requests.findIndex(r => r.id === request_id);
     if (reqIndex !== -1) {
         requests[reqIndex].status = "answered";
@@ -145,6 +152,7 @@ app.post("/answers/create", (req, res) => {
 
     res.json({ success: true, answer });
 });
+
 
 
 app.get("/answers", (req, res) => res.json(answers));
