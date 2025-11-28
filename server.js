@@ -141,10 +141,20 @@ users.push({
 });
 
 doctors.push({
-    username: "@doctor_ali",
-    email: "doctorali@example.com",
-    name: "Ali Karimov",
-    specialization: "Terapevt",
+    username: "dr_faxriyor",
+    email: "javlon@example.com",
+    name: "Dr. Faxriyorbotirxonov",
+    specialization: "Cardiologist",
+    code: await bcrypt.hash("faxriyor123", 10),
+    created_at: new Date()
+});
+
+doctors.push({
+    username: "dr_madina",
+    email: "madina@example.com",
+    name: "Dr. Madina Rasulova",
+    specialization: "Dermatologist",
+    code: await bcrypt.hash("madina123", 10),
     created_at: new Date()
 });
 
