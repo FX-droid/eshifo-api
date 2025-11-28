@@ -140,14 +140,18 @@ users.push({
     created_at: new Date()
 });
 
-doctors.push({
-    username: "dr_faxriyor",
-    email: "javlon@example.com",
-    name: "Dr. Faxriyorbotirxonov",
-    specialization: "Cardiologist",
-    code: await bcrypt.hash("faxriyor123", 10),
-    created_at: new Date()
-});
+(async () => {
+    const hashedCode = await bcrypt.hash("faxriyor123", 10);
+    doctors.push({
+        username: "dr_faxriyor",
+        email: "faxriyor@example.com",
+        name: "Dr. Faxriyor",
+        specialization: "Therapist",
+        code: hashedCode,
+        created_at: new Date()
+    });
+})();
+
 
 doctors.push({
     username: "dr_madina",
