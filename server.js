@@ -153,14 +153,6 @@ users.push({
 })();
 
 
-doctors.push({
-    username: "dr_madina",
-    email: "madina@example.com",
-    name: "Dr. Madina Rasulova",
-    specialization: "Dermatologist",
-    code: await bcrypt.hash("madina123", 10),
-    created_at: new Date()
-});
 
 
 const reqId1 = Date.now().toString();
