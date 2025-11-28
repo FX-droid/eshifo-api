@@ -72,12 +72,28 @@ app.post("/users/register", (req, res) => {
 app.get("/users", (req, res) => res.json(users));
 
 // === DOCTORS ===
-app.post("/doctors/register", (req, res) => {
-    const { username, email, name, specialization } = req.body;
-    const doctor = { username, email, name, specialization, created_at: new Date() };
+// Doctor register
+app.post("/doctors/register", async (req, res) => {
+    const { username, email, name, specialization, code } = req.body;
+    const hashedCode = await bcrypt.hash(code, 10);
+    const doctor = { username, email, name, specialization, code: hashedCode, created_at: new Date() };
     doctors.push(doctor);
     res.json({ success: true, doctor });
 });
+
+// Doctor login
+app.post("/doctors/login", async (req, res) => {
+    const { username, code } = req.body;
+    const doctor = doctors.find(d => d.username === username);
+    if (!doctor) return res.status(401).json({ error: "Doctor not found" });
+
+    const match = await bcrypt.compare(code, doctor.code);
+    if (!match) return res.status(401).json({ error: "Invalid code" });
+
+    const token = jwt.sign({ username: doctor.username, role: "doctor" }, "SECRET_KEY", { expiresIn: "1h" });
+    res.json({ success: true, token });
+});
+
 
 app.get("/doctors", (req, res) => {
     const doctorsWithStats = doctors.map(doc => {
