@@ -113,6 +113,14 @@ app.post("/requests/create", (req, res) => {
 
 app.get("/requests", (req, res) => res.json(requests));
 
+
+// Doktorning murojaatlari
+app.get("/doctor/requests/:username", (req, res) => {
+    const { username } = req.params;
+    const doctorRequests = requests.filter(r => r.assigned_doctor === username);
+    res.json(doctorRequests);
+});
+
 // === ANSWERS ===
 app.post("/answers/create", (req, res) => {
     const { request_id, doctor_username, text } = req.body;
@@ -120,10 +128,14 @@ app.post("/answers/create", (req, res) => {
     answers.push(answer);
 
     const reqIndex = requests.findIndex(r => r.id === request_id);
-    if (reqIndex !== -1) requests[reqIndex].status = "answered";
+    if (reqIndex !== -1) {
+        requests[reqIndex].status = "answered";
+        requests[reqIndex].assigned_doctor = doctor_username;
+    }
 
     res.json({ success: true, answer });
 });
+
 
 app.get("/answers", (req, res) => res.json(answers));
 
