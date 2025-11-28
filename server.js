@@ -107,7 +107,6 @@ app.get("/doctors", (req, res) => {
 app.post("/requests/create", (req, res) => {
     const { username, disease, complaint, specialization, assigned_doctor } = req.body;
 
-
     const request = {
         id: Date.now().toString(),
         username,
@@ -123,6 +122,7 @@ app.post("/requests/create", (req, res) => {
 
     res.json({ success: true, request });
 });
+
 
 
 
