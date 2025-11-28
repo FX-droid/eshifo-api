@@ -168,13 +168,17 @@ users.push({
 
 
 const reqId1 = Date.now().toString();
+
 requests.push({
-    id: reqId1,
-    username: "patient_1",
-    disease: "Gripp",
-    complaint: "2 kundan beri isitma va yo‘tal",
-    status: "answered"
+    id: Date.now().toString(),
+    username: "user_ali",              // bemor username
+    disease: "Yurak og‘rig‘i",         // kasallik
+    complaint: "Ko‘krak qafasida og‘riq va tez charchash", // shikoyat
+    status: "pending",
+    assigned_doctor: "dr_faxriyor",    // 🔑 murojaat aynan dr_faxriyor uchun
+    created_at: new Date()
 });
+
 
 answers.push({
     id: Date.now().toString(),
