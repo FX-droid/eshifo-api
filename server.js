@@ -160,7 +160,6 @@ app.post("/answers/create", (req, res) => {
     };
     answers.push(answer);
 
-    // murojaatni update qilamiz
     const reqIndex = requests.findIndex(r => r.id === request_id);
     if (reqIndex !== -1) {
         requests[reqIndex].status = "answered";
@@ -205,13 +204,20 @@ users.push({
 const reqId1 = Date.now().toString();
 
 requests.push({
-    id: Date.now().toString(),
-    username: "user_ali",              // bemor username
-    disease: "Yurak og‘rig‘i",         // kasallik
-    complaint: "Ko‘krak qafasida og‘riq va tez charchash", // shikoyat
+    id: reqId1,
+    username: "user_ali",
+    disease: "Yurak og‘rig‘i",
+    complaint: "Ko‘krak qafasida og‘riq va tez charchash",
     status: "pending",
-    assigned_doctor: "dr_faxriyor",    // 🔑 murojaat aynan dr_faxriyor uchun
-    telegram_id: 7690263077,
+    assigned_doctor: "dr_faxriyor",
+    created_at: new Date()
+});
+
+answers.push({
+    id: Date.now().toString(),
+    request_id: reqId1,
+    doctor_username: "@doctor_ali",
+    text: "Paracetamol iching va ko‘proq suyuqlik iching",
     created_at: new Date()
 });
 
@@ -222,13 +228,4 @@ answers.push({
     doctor_username: "@doctor_ali",
     text: "Paracetamol iching va ko‘proq suyuqlik iching",
     created_at: new Date()
-});
-
-const reqId2 = (Date.now() + 1).toString();
-requests.push({
-    id: reqId2,
-    username: "patient_2",
-    disease: "Bosh og‘rig‘i",
-    complaint: "Ko‘p ishlaganimdan keyin boshim qattiq og‘riyapti",
-    status: "pending"
 });
