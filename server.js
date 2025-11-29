@@ -28,6 +28,8 @@ app.post("/admins/register", async (req, res) => {
     res.json({ success: true, admin });
 });
 
+
+
 // === ADMINS LIST ===
 app.get("/admins", (req, res) => {
     const adminsList = admins.map(a => ({
@@ -127,6 +129,16 @@ app.post("/requests/create", (req, res) => {
 
 
 app.get("/requests", (req, res) => res.json(requests));
+
+// === REQUEST BY ID ===
+app.get("/requests/:id", (req, res) => {
+    const { id } = req.params;
+    const request = requests.find(r => r.id === id);
+    if (!request) {
+        return res.status(404).json({ error: "Request not found" });
+    }
+    res.json(request);
+});
 
 
 // Doktorning murojaatlari
