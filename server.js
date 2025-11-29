@@ -211,6 +211,7 @@ requests.push({
     complaint: "Ko‘krak qafasida og‘riq va tez charchash", // shikoyat
     status: "pending",
     assigned_doctor: "dr_faxriyor",    // 🔑 murojaat aynan dr_faxriyor uchun
+    telegram_id: "user7690263077",
     created_at: new Date()
 });
 
