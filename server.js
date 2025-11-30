@@ -19,11 +19,15 @@ const admins = [];
 
 app.post("/admins/register", async (req, res) => {
     const { username, code } = req.body;
+    if (!code) {
+        return res.status(400).json({ error: "Code (parol) majburiy" });
+    }
     const hashedCode = await bcrypt.hash(code, 10);
     const admin = { username, code: hashedCode, created_at: new Date() };
     admins.push(admin);
     res.json({ success: true, admin });
 });
+
 
 
 
