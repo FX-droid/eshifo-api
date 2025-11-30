@@ -117,7 +117,7 @@ app.post("/requests/create", (req, res) => {
         specialization,
         assigned_doctor,
         telegram_id,
-        status: "pending",
+        status: "Kutilmoqda",
         created_at: new Date()
     };
 
@@ -162,7 +162,7 @@ app.post("/answers/create", (req, res) => {
 
     const reqIndex = requests.findIndex(r => r.id === request_id);
     if (reqIndex !== -1) {
-        requests[reqIndex].status = "answered";
+        requests[reqIndex].status = "Javob berildi";
         requests[reqIndex].assigned_doctor = doctor_username;
     }
 
