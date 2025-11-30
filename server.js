@@ -6,10 +6,7 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 app.use(cors());
-
-
 app.use(express.json());
-
 
 const users = [];
 const doctors = [];
@@ -17,6 +14,7 @@ const requests = [];
 const answers = [];
 const admins = [];
 
+// === ADMIN REGISTER ===
 app.post("/admins/register", async (req, res) => {
     const { username, code } = req.body;
     if (!code) {
@@ -28,9 +26,7 @@ app.post("/admins/register", async (req, res) => {
     res.json({ success: true, admin });
 });
 
-
-
-
+// === ADMINS LIST ===
 app.get("/admins", (req, res) => {
     const adminsList = admins.map(a => ({
         username: a.username,
@@ -39,7 +35,7 @@ app.get("/admins", (req, res) => {
     res.json(adminsList);
 });
 
-
+// === ADMIN LOGIN ===
 app.post("/admins/login", async (req, res) => {
     const { username, code } = req.body;
     const admin = admins.find(a => a.username === username);
@@ -52,6 +48,7 @@ app.post("/admins/login", async (req, res) => {
     res.json({ success: true, token });
 });
 
+// === Example admin qo‘shib qo‘yish ===
 (async () => {
     const hashedCode = await bcrypt.hash("admin123", 10);
     admins.push({
@@ -61,6 +58,7 @@ app.post("/admins/login", async (req, res) => {
     });
 })();
 
+// === USERS ===
 app.post("/users/register", (req, res) => {
     const { username, full_name, phone } = req.body;
     const user = { username, full_name, phone, created_at: new Date() };
@@ -70,14 +68,17 @@ app.post("/users/register", (req, res) => {
 
 app.get("/users", (req, res) => res.json(users));
 
+// === DOCTORS ===
 app.post("/doctors/register", async (req, res) => {
     const { username, email, name, specialization, code } = req.body;
+    if (!code) {
+        return res.status(400).json({ error: "Code (parol) majburiy" });
+    }
     const hashedCode = await bcrypt.hash(code, 10);
     const doctor = { username, email, name, specialization, code: hashedCode, created_at: new Date() };
     doctors.push(doctor);
     res.json({ success: true, doctor });
 });
-
 
 app.post("/doctors/login", async (req, res) => {
     const { username, code } = req.body;
@@ -91,7 +92,6 @@ app.post("/doctors/login", async (req, res) => {
     res.json({ success: true, token });
 });
 
-
 app.get("/doctors", (req, res) => {
     const doctorsWithStats = doctors.map(doc => {
         const answersCount = answers.filter(a => a.doctor_username === doc.username).length;
@@ -100,6 +100,7 @@ app.get("/doctors", (req, res) => {
     res.json(doctorsWithStats);
 });
 
+// === REQUESTS ===
 app.post("/requests/create", (req, res) => {
     const { username, disease, complaint, specialization, assigned_doctor, telegram_id } = req.body;
 
@@ -111,16 +112,13 @@ app.post("/requests/create", (req, res) => {
         specialization,
         assigned_doctor,
         telegram_id,
-        status: "Kutilmoqda",
+        status: "pending", // bir xil qilib qo‘ydik
         created_at: new Date()
     };
 
     requests.push(request);
     res.json({ success: true, request });
 });
-
-
-
 
 app.get("/requests", (req, res) => res.json(requests));
 
@@ -139,6 +137,7 @@ app.get("/doctor/requests/:username", (req, res) => {
     res.json(doctorRequests);
 });
 
+// === ANSWERS ===
 app.post("/answers/create", (req, res) => {
     const { request_id, doctor_username, text } = req.body;
     const answer = {
@@ -159,14 +158,13 @@ app.post("/answers/create", (req, res) => {
     res.json({ success: true, answer });
 });
 
-
-
 app.get("/answers", (req, res) => res.json(answers));
 
+// === RUN ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on port ${PORT}`));
 
-
+// === Example data qo‘shib qo‘yish ===
 users.push({
     username: "@faxriyorbotirxonovgo",
     full_name: "Faxriyor Botirxonov",
@@ -186,9 +184,6 @@ users.push({
     });
 })();
 
-
-
-
 const reqId1 = Date.now().toString();
 
 requests.push({
@@ -200,15 +195,6 @@ requests.push({
     assigned_doctor: "dr_faxriyor",
     created_at: new Date()
 });
-
-answers.push({
-    id: Date.now().toString(),
-    request_id: reqId1,
-    doctor_username: "@doctor_ali",
-    text: "Paracetamol iching va ko‘proq suyuqlik iching",
-    created_at: new Date()
-});
-
 
 answers.push({
     id: Date.now().toString(),
