@@ -6,20 +6,18 @@ const jwt = require("jsonwebtoken");
 const app = express();
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173 http://localhost:5174",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
 
-// In-memory data
 const users = [];
 const doctors = [];
 const requests = [];
 const answers = [];
-const admins = []; // 🔑 adminlar
+const admins = [];
 
-// === ADMIN REGISTER ===
 app.post("/admins/register", async (req, res) => {
     const { username, code } = req.body;
     const hashedCode = await bcrypt.hash(code, 10);
@@ -30,7 +28,6 @@ app.post("/admins/register", async (req, res) => {
 
 
 
-// === ADMINS LIST ===
 app.get("/admins", (req, res) => {
     const adminsList = admins.map(a => ({
         username: a.username,
@@ -40,7 +37,6 @@ app.get("/admins", (req, res) => {
 });
 
 
-// === ADMIN LOGIN ===
 app.post("/admins/login", async (req, res) => {
     const { username, code } = req.body;
     const admin = admins.find(a => a.username === username);
@@ -53,7 +49,6 @@ app.post("/admins/login", async (req, res) => {
     res.json({ success: true, token });
 });
 
-// === Example admin qo‘shib qo‘yish ===
 (async () => {
     const hashedCode = await bcrypt.hash("admin123", 10);
     admins.push({
@@ -63,7 +58,6 @@ app.post("/admins/login", async (req, res) => {
     });
 })();
 
-// === USERS ===
 app.post("/users/register", (req, res) => {
     const { username, full_name, phone } = req.body;
     const user = { username, full_name, phone, created_at: new Date() };
@@ -73,8 +67,6 @@ app.post("/users/register", (req, res) => {
 
 app.get("/users", (req, res) => res.json(users));
 
-// === DOCTORS ===
-// Doctor register
 app.post("/doctors/register", async (req, res) => {
     const { username, email, name, specialization, code } = req.body;
     const hashedCode = await bcrypt.hash(code, 10);
@@ -83,7 +75,7 @@ app.post("/doctors/register", async (req, res) => {
     res.json({ success: true, doctor });
 });
 
-// Doctor login
+
 app.post("/doctors/login", async (req, res) => {
     const { username, code } = req.body;
     const doctor = doctors.find(d => d.username === username);
@@ -105,7 +97,6 @@ app.get("/doctors", (req, res) => {
     res.json(doctorsWithStats);
 });
 
-// === REQUESTS ===
 app.post("/requests/create", (req, res) => {
     const { username, disease, complaint, specialization, assigned_doctor, telegram_id } = req.body;
 
@@ -130,7 +121,6 @@ app.post("/requests/create", (req, res) => {
 
 app.get("/requests", (req, res) => res.json(requests));
 
-// === REQUEST BY ID ===
 app.get("/requests/:id", (req, res) => {
     const { id } = req.params;
     const request = requests.find(r => r.id === id);
@@ -140,15 +130,12 @@ app.get("/requests/:id", (req, res) => {
     res.json(request);
 });
 
-
-// Doktorning murojaatlari
 app.get("/doctor/requests/:username", (req, res) => {
     const { username } = req.params;
     const doctorRequests = requests.filter(r => r.assigned_doctor === username);
     res.json(doctorRequests);
 });
 
-// === ANSWERS ===
 app.post("/answers/create", (req, res) => {
     const { request_id, doctor_username, text } = req.body;
     const answer = {
@@ -173,12 +160,10 @@ app.post("/answers/create", (req, res) => {
 
 app.get("/answers", (req, res) => res.json(answers));
 
-// === RUN ===
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on port ${PORT}`));
 
 
-// === Example data qo‘shib qo‘yish ===
 users.push({
     username: "@faxriyorbotirxonovgo",
     full_name: "Faxriyor Botirxonov",
